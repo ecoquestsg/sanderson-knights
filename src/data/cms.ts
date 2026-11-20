@@ -6,15 +6,13 @@ import type {
   Maker,
 } from './exhibitions';
 
+// ======================================================
+// 01 — LOAD MAKERS
+// ======================================================
+
 // Read all maker records created by Pages CMS.
 const makerFiles = import.meta.glob<Maker>(
   '../content/makers/*.json',
-  { eager: true, import: 'default' }
-);
-
-// Read all exhibition records.
-const exhibitionFiles = import.meta.glob<CMSExhibition>(
-  '../content/exhibitions/*.json',
   { eager: true, import: 'default' }
 );
 
@@ -22,20 +20,49 @@ export const makers: Maker[] = Object.values(
   makerFiles
 ).sort((a, b) => a.name.localeCompare(b.name));
 
+// Map permanent maker slugs to their display names.
 const makerMap = new Map(
   makers.map((maker) => [maker.slug, maker.name])
 );
+
+// ======================================================
+// 02 — LOAD EXHIBITIONS
+// ======================================================
+
+// Read all exhibition records created by Pages CMS.
+const exhibitionFiles = import.meta.glob<CMSExhibition>(
+  '../content/exhibitions/*.json',
+  { eager: true, import: 'default' }
+);
+
+// Resolve exhibition slugs from existing data or filename.
+// This supports both legacy and newly created records.
+const allExhibitions = Object.entries(exhibitionFiles)
+  .map(([path, post]) => ({
+    ...post,
+    slug:
+      post.slug ||
+      path.split('/').pop()!.replace(/\.json$/, ''),
+  }));
+
+// ======================================================
+// 03 — RESOLVE IMAGE ATTRIBUTION
+// ======================================================
 
 function resolveAttribution(
   imageCredit: Attribution | null | undefined,
   defaultCredit: Attribution
 ): Attribution {
-  if (!imageCredit ||
-      (!imageCredit.name && !imageCredit.url)) {
+  // No override: use the exhibition-level attribution.
+  if (
+    !imageCredit ||
+    (!imageCredit.name && !imageCredit.url)
+  ) {
     return defaultCredit;
   }
 
-  // A custom attribution must have BOTH fields.
+  // An override must include BOTH the credit name
+  // and original source URL.
   if (!imageCredit.name || !imageCredit.url) {
     throw new Error(
       'Image attribution override requires name and URL.'
@@ -45,8 +72,12 @@ function resolveAttribution(
   return imageCredit;
 }
 
+// ======================================================
+// 04 — VALIDATE & PREPARE PUBLISHED EXHIBITIONS
+// ======================================================
+
 export const publishedExhibitions: Exhibition[] =
-  Object.values(exhibitionFiles)
+  allExhibitions
     .filter(
       (post) =>
         post.status === 'published' &&
@@ -61,35 +92,43 @@ export const publishedExhibitions: Exhibition[] =
         );
       }
 
-      if (!post.attribution?.name ||
-          !post.attribution?.url) {
+      if (
+        !post.attribution?.name ||
+        !post.attribution?.url
+      ) {
         throw new Error(
           `Missing default attribution in ${post.slug}`
         );
       }
 
-      if (!/^https?:\/\/.+/i.test(post.attribution.url)) {
+      if (
+        !/^https?:\/\/.+/i.test(post.attribution.url)
+      ) {
         throw new Error(
           `Invalid attribution URL in ${post.slug}`
         );
       }
 
-      if (!Array.isArray(post.images) ||
-          post.images.length < 3 ||
-          post.images.length > 8) {
+      if (
+        !Array.isArray(post.images) ||
+        post.images.length < 3 ||
+        post.images.length > 8
+      ) {
         throw new Error(
           `${post.slug} requires 3–8 photographs.`
         );
       }
 
-      const images = post.images.map((image) => {
+      const images = post.images.map((image, index) => {
         const credit = resolveAttribution(
           image.attribution,
           post.attribution
         );
 
-        if (!image.src || !image.alt ||
-            !/^https?:\/\/.+/i.test(credit.url)) {
+        if (
+          !image.src ||
+          !/^https?:\/\/.+/i.test(credit.url)
+        ) {
           throw new Error(
             `Invalid image data in ${post.slug}`
           );
@@ -98,7 +137,14 @@ export const publishedExhibitions: Exhibition[] =
         return {
           src: image.src,
           full: image.src,
-          alt: image.alt,
+
+          // Use manually entered alt text when provided.
+          // Otherwise generate a basic fallback.
+          alt:
+            image.alt?.trim() ||
+            `${makerName} ${post.name} — image ${index + 1}`,
+
+          // Standardised credit presentation.
           credit: `Courtesy of ${credit.name}`,
           creditName: credit.name,
           creditUrl: credit.url,
@@ -115,7 +161,8 @@ export const publishedExhibitions: Exhibition[] =
         images,
       };
     })
-    .sort((a, b) =>
-      b.publishedAt.localeCompare(a.publishedAt) ||
-      a.slug.localeCompare(b.slug)
+    .sort(
+      (a, b) =>
+        b.publishedAt.localeCompare(a.publishedAt) ||
+        a.slug.localeCompare(b.slug)
     );

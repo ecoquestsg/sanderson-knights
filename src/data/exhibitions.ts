@@ -1,3 +1,8 @@
+export interface Maker {
+  id?: string;
+  slug: string;
+  name: string;
+}
 
 export interface ExhibitionImage {
   src: string;
@@ -32,7 +37,8 @@ export interface Attribution {
 }
 
 export interface CMSExhibition {
-  slug: string;
+  id?: string;
+  slug?: string; // Legacy records only
   name: string;
   maker: string;
   reference?: string;
@@ -42,9 +48,8 @@ export interface CMSExhibition {
   attribution: Attribution;
   images: Array<{
     src: string;
-    alt: string;
+    alt?: string;
     attribution?: Attribution | null;
   }>;
   sourceNotes?: string;
 }
-

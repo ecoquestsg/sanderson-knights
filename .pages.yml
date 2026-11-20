@@ -33,6 +33,14 @@ content:
         order: asc
 
     fields:
+      - name: id
+        label: Record UUID
+        type: uuid
+        required: true
+        options:
+          editable: false
+          generate: false
+
       - name: name
         label: Maker name
         type: string
@@ -59,7 +67,9 @@ content:
     type: collection
     path: src/content/exhibitions
     format: json
-    filename: "{slug}.json"
+    filename:
+      template: "{primary}.json"
+      field: false
 
     view:
       primary: name
@@ -70,6 +80,13 @@ content:
         order: desc
 
     fields:
+      - name: id
+        label: Record UUID
+        type: uuid
+        required: true
+        options:
+          editable: false
+          generate: false
 
       # WATCH DETAILS
 
@@ -77,15 +94,6 @@ content:
         label: Watch name
         type: string
         required: true
-
-      - name: slug
-        label: Permanent exhibition ID
-        type: string
-        required: true
-        pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-        description: >
-          Unique permanent ID for this exhibition.
-          Example: oris-big-crown-doraemon.
 
       - name: maker
         label: Maker
@@ -170,7 +178,10 @@ content:
           - name: alt
             label: Image description
             type: text
-            required: true
+            required: false
+            description: >
+              Optional. Leave blank to use a
+              generated watch-and-image description.
 
           - name: attribution
             label: Custom image attribution
