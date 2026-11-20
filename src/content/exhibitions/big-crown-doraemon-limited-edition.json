@@ -4,7 +4,7 @@
   "maker": "oris",
   "reference": "01 754 7798 4085-Set",
   "publishedAt": "2026-11-20",
-  "status": "draft",
+  "status": "published",
   "attribution": {
     "name": "ORIS",
     "url": "https://www.oris.ch/en-SG/product/watch/big-crown/new-big-crown-0/01-754-7798-4085-Set?srsltid=AYCX9vKHEk4Uyo4xNKJYuW3PGgG7uSgb18mQVo8BYFE7KIEltAdoRX0c"
@@ -17,5 +17,5 @@
       "src": "/images/exhibitions/doraemonowebdigital1920x1440v01-v1jpg.webp"
     }
   ],
-  "rightsStatus": "pending"
+  "rightsStatus": "approved"
 }
