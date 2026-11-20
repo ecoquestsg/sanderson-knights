@@ -1,0 +1,24 @@
+{
+  "id": "d93c53c3-6615-416a-b4ca-7e7dd8cf8c39",
+  "name": "SPRING DRIVE LIMITED EDITION “RED LION”",
+  "maker": "grand-seiko",
+  "reference": "SBGD228",
+  "publishedAt": "2026-11-20",
+  "status": "published",
+  "attribution": {
+    "name": "Grand Seiko",
+    "url": "https://www.grand-seiko.com/jp-ja/collections/sbgd228"
+  },
+  "images": [
+    {
+      "src": "/images/exhibitions/sbgd228kv.jpg"
+    },
+    {
+      "src": "/images/exhibitions/sbgd228count1.jpg"
+    },
+    {
+      "src": "/images/exhibitions/sbgd228count3.png"
+    }
+  ],
+  "rightsStatus": "approved"
+}
