@@ -11,7 +11,11 @@
   },
   "images": [
     {
-      "src": "/images/exhibitions/citizen1.png",
+      "src": "/images/exhibitions/h1n75niss5zdxbrbhtke-v1jpg.webp",
+      "alt": "test"
+    },
+    {
+      "src": "/images/exhibitions/doraemonowebdigital1920x1440v01-v1jpg.webp",
       "alt": "test"
     }
   ],
