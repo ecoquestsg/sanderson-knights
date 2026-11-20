@@ -23,15 +23,11 @@ export const site = {
 
 // Left-hand navigation. "Digital" is the home page and shows by default.
 export const nav: NavItem[] = [
-  { label: 'Digital', href: '/' },
-  { label: 'Analog', href: '/analog' },
-  { label: 'Calendar', href: '/calendar' },
-  { label: 'Tech Blog', href: '/blog/tech' },
-  { label: 'Photo Blog', href: '/blog/photography' },
-  { label: 'About', href: '/about' },
-  { label: 'Contact', href: '/contact' },
-  { label: 'License', href: '/license' },
+  { label: 'GALLERY', href: '/' },
+  { label: 'ARCHIVE', href: '/archive' },
+  { label: 'ABOUT', href: '/about' },
 ];
+
 
 // Social / external links shown in the sidebar and on the contact page. Replace
 // the placeholders with your own. If you drop or add one, also update the

@@ -16,7 +16,7 @@ import '../styles/global.css';
 import ebGaramondBody from '@fontsource/eb-garamond/files/eb-garamond-latin-400-normal.woff2?url';
 import cormorantDisplay from '@fontsource/cormorant-garamond/files/cormorant-garamond-latin-500-normal.woff2?url';
 
-import Sidebar from '../components/Sidebar.astro';
+import Header from '../components/Header.astro';
 import BaseSchema from '../components/BaseSchema.astro';
 import { site } from '../config';
 
@@ -40,36 +40,6 @@ const year = new Date().getFullYear();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="preload" href={ebGaramondBody} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={cormorantDisplay} as="font" type="font/woff2" crossorigin />
-    <script is:inline>
-      // Apply the saved (or system) theme before paint to avoid a flash. Manual
-      // choice is persisted in localStorage by the toggle in the sidebar.
-      (function () {
-        try {
-          var t = localStorage.getItem('theme');
-          if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.dataset.theme = 'dark';
-          } else if (t === 'light') {
-            document.documentElement.dataset.theme = 'light';
-          }
-        } catch (e) {}
-      })();
-    </script>
-    <style is:inline>
-      /* Critical CSS, inlined so it applies at parse time — before the bundled
-         stylesheet finishes loading. The browser's first paint then already
-         matches the final layout. Without it, the page briefly painted with
-         user-agent defaults (an 8px body margin; the lightbox overlay shown)
-         and snapped to these values once the stylesheet arrived, which surfaced
-         as the html>body and #lightbox>figure Cumulative Layout Shift (CLS).
-         `.lightbox` keeps the same selector as global.css so the more specific
-         `.lightbox.is-open` rule still wins when the viewer opens. */
-      body {
-        margin: 0;
-      }
-      .lightbox {
-        display: none;
-      }
-    </style>
     <link rel="icon" href="/favicon.png" type="image/png" sizes="256x256" />
     <link rel="icon" href="/favicon-dark.png" type="image/png" sizes="256x256" media="(prefers-color-scheme: dark)" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -94,26 +64,13 @@ const year = new Date().getFullYear();
     <meta name="twitter:image" content={ogImage} />
     <BaseSchema />
   </head>
+
   <body>
-    <Sidebar />
-    <main class="main">
+    <Header />
+
+    <main class="main" id="main-content">
       <slot />
-      <footer class="site-footer">
-        <p class="site-footer__line">
-          <span>© {year} {site.name}</span>
-          <a class="site-footer__link" href="/privacy">Privacy</a>
-          <a class="site-footer__link" href="/license">Licensing</a>
-        </p>
-      </footer>
     </main>
-    <script>
-      // Deter casual saving/dragging of photos site-wide (a deterrent, not DRM).
-      const guard = (e: Event) => {
-        const t = e.target as HTMLElement | null;
-        if (t && t.closest('.photo-tile, .lightbox')) e.preventDefault();
-      };
-      document.addEventListener('contextmenu', guard);
-      document.addEventListener('dragstart', guard);
-    </script>
   </body>
+  
 </html>

@@ -1,0 +1,30 @@
+
+---
+import { nav } from '../config';
+
+const currentPath =
+  Astro.url.pathname.replace(/\/+$/, '') || '/';
+
+const isActive = (href: string) =>
+  currentPath === href ||
+  (href !== '/' && currentPath.startsWith(`${href}/`));
+---
+
+<header class="sk-header">
+  <nav class="sk-navigation" aria-label="Primary navigation">
+    {
+      nav.map((item) => (
+        <a
+          href={item.href}
+          class:list={[
+            'sk-navigation__link',
+            { 'is-active': isActive(item.href) },
+          ]}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+        >
+          {item.label}
+        </a>
+      ))
+    }
+  </nav>
+</header>

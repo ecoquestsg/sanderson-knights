@@ -1428,3 +1428,94 @@ a {
 :root[data-theme='dark'] .prose .token.important {
   color: #fd971f;
 }
+
+
+
+/* =====================================================
+   SANDERSON KNIGHTS — BASE LAYOUT
+   ===================================================== */
+
+:root {
+  --bg: #ffffff;
+  --fg: #111111;
+  --muted: #777777;
+  --line: #eeeeee;
+}
+
+body {
+  background: #ffffff;
+  color: #111111;
+}
+
+/* Header */
+.sk-header {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  background: #ffffff;
+  padding: 26px 20px 22px;
+}
+
+/* Three-word navigation */
+.sk-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.sk-navigation__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #777777;
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  transition: color 0.2s ease;
+}
+
+.sk-navigation__link:hover,
+.sk-navigation__link.is-active {
+  color: #111111;
+}
+
+.sk-navigation__link:focus-visible {
+  outline: 1px solid #111111;
+  outline-offset: 4px;
+}
+
+/* Remove the template's sidebar offset */
+.main {
+  margin-left: 0;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 0 20px 60px;
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .sk-header {
+    padding: 36px 40px 30px;
+  }
+
+  .main {
+    padding: 0 40px 80px;
+  }
+}
+
+/* Keep the interface white even if a previous
+   template session saved dark-mode preferences. */
+:root[data-theme='dark'] {
+  --bg: #ffffff;
+  --fg: #111111;
+  --muted: #777777;
+  --line: #eeeeee;
+}
