@@ -27,7 +27,7 @@ content:
     view:
       primary: name
       fields: [name, slug]
-      add sort: [name]
+      sort: [name]
       default:
         sort: name
         order: asc
@@ -182,12 +182,12 @@ content:
               - name: name
                 label: Custom credit name
                 type: string
-                required: true
+                required: false
 
               - name: url
                 label: Custom source URL
                 type: string
-                required: true
+                required: false
                 pattern: "^https?://.+"
 
 
