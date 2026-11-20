@@ -1,0 +1,58 @@
+
+---
+import Layout from '../../layouts/Layout.astro';
+import GalleryFeed from '../../components/GalleryFeed.astro';
+import { exhibitions } from '../../data/demoExhibitions';
+
+export function getStaticPaths() {
+  // Define the helper inside getStaticPaths
+  const makerSlug = (maker: string) =>
+    maker
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/&/g, 'and')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+
+  const makers = [...new Set(
+    exhibitions.map((post) => post.maker)
+  )];
+
+  return makers.map((maker) => ({
+    params: { maker: makerSlug(maker) },
+    props: {
+      maker,
+      posts: exhibitions.filter(
+        (post) => post.maker === maker
+      ),
+    },
+  }));
+}
+
+const { maker, posts } = Astro.props;
+---
+
+<Layout title={maker}>
+  <section class="sk-maker-gallery">
+    <h1>{maker}</h1>
+
+    <GalleryFeed posts={posts} />
+  </section>
+</Layout>
+
+<style>
+  .sk-maker-gallery {
+    width: 100%;
+  }
+
+  h1 {
+    max-width: 600px;
+    margin: 28px auto 35px;
+    color: #111;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.09em;
+  }
+</style>
