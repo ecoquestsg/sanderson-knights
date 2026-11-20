@@ -29,6 +29,9 @@ const sortedPosts = [...posts].sort((a, b) =>
               type="button"
               data-sk-open
               data-image-index={index}
+              data-credit-name={image.creditName || ''}
+              data-credit-url={image.creditUrl || ''}
+              data-full-src={image.full}
               aria-label={`Enlarge image ${index + 1} of ${post.name}`}
             >
               <img
@@ -40,9 +43,24 @@ const sortedPosts = [...posts].sort((a, b) =>
                 decoding="async"
               />
             </button>
-
             <span class="sk-image-credit">
-              {image.credit}
+              {
+                image.creditUrl && image.creditName ? (
+                  <>
+                    Courtesy of{' '}
+                    <a
+                      href={image.creditUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Original image source: ${image.creditName}`}
+                    >
+                      {image.creditName}
+                    </a>
+                  </>
+                ) : (
+                  image.credit
+                )
+              }
             </span>
           </div>
         ))}
@@ -86,7 +104,16 @@ const sortedPosts = [...posts].sort((a, b) =>
 
   <div class="sk-viewer-content">
     <img data-sk-viewer-image alt="" />
-    <p data-sk-viewer-credit></p>
+    <p class="sk-viewer-credit" data-sk-viewer-credit>
+      <span data-sk-credit-prefix></span>
+      <a
+        data-sk-credit-link
+        target="_blank"
+        rel="noopener noreferrer"
+        hidden
+      ></a>
+      <span data-sk-credit-fallback></span>
+    </p>
     <span data-sk-viewer-counter></span>
   </div>
 
@@ -153,6 +180,23 @@ const sortedPosts = [...posts].sort((a, b) =>
     object-fit: contain;
   }
 
+  .sk-image-credit a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .sk-image-credit a:focus-visible {
+    outline: 1px solid white;
+    outline-offset: 3px;
+  }
+
+  .sk-viewer-credit a {
+    color: #ddd;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
   .sk-image-credit {
     position: absolute;
     bottom: 10px;
@@ -163,7 +207,9 @@ const sortedPosts = [...posts].sort((a, b) =>
     color: white;
     font: 9px/1.4 Arial, sans-serif;
     letter-spacing: 0.02em;
-    pointer-events: none;
+    z-index: 1;
+    pointer-events: auto;
+
   }
 
   .sk-meta {
@@ -322,12 +368,41 @@ const sortedPosts = [...posts].sort((a, b) =>
     viewerImage.alt = image.alt;
     viewerImage.removeAttribute('srcset');
     viewerImage.removeAttribute('sizes');
-    viewerImage.src = image.currentSrc || image.src;
+    viewerImage.src = button.dataset.fullSrc || image.currentSrc || image.src;
 
-    viewerCredit.textContent =
-      button.parentElement
-        ?.querySelector('.sk-image-credit')
-        ?.textContent?.trim() || '';
+    const creditName = button.dataset.creditName || '';
+    const creditUrl = button.dataset.creditUrl || '';
+
+    const prefix = viewerCredit.querySelector<HTMLElement>(
+      '[data-sk-credit-prefix]'
+    );
+
+    const link = viewerCredit.querySelector<HTMLAnchorElement>(
+      '[data-sk-credit-link]'
+    );
+
+    const fallback = viewerCredit.querySelector<HTMLElement>(
+      '[data-sk-credit-fallback]'
+    );
+
+    if (prefix && link && fallback) {
+      if (creditName && creditUrl) {
+        prefix.textContent = 'Courtesy of ';
+        link.textContent = creditName;
+        link.href = creditUrl;
+        link.hidden = false;
+        fallback.textContent = '';
+      } else {
+        prefix.textContent = '';
+        link.removeAttribute('href');
+        link.hidden = true;
+        fallback.textContent =
+          button.parentElement
+            ?.querySelector('.sk-image-credit')
+            ?.textContent?.trim() || '';
+      }
+    }
+
 
     viewerCounter.textContent =
       `${String(activeIndex + 1).padStart(2, '0')} / ` +

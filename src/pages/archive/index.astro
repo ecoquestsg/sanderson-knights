@@ -1,32 +1,70 @@
 
 ---
 import Layout from '../../layouts/Layout.astro';
+import { makers, publishedExhibitions } from '../../data/cms';
+
+// Only show makers with publicly visible exhibitions.
+const activeMakerSlugs = new Set(
+  publishedExhibitions.map((post) => post.makerSlug)
+);
+
+const visibleMakers = makers.filter((maker) =>
+  activeMakerSlugs.has(maker.slug)
+);
 ---
 
 <Layout title="Archive">
-  <section class="sk-archive-placeholder">
-    <h1>ARCHIVE</h1>
-    <p>The collection is being assembled.</p>
+  <section class="sk-archive" aria-label="Watchmakers">
+    <nav class="sk-maker-list" aria-label="Browse by maker">
+      {visibleMakers.map((maker) => (
+        <a href={`/archive/${maker.slug}/`}>
+          {maker.name}
+        </a>
+      ))}
+    </nav>
   </section>
 </Layout>
 
 <style>
-  .sk-archive-placeholder {
+  .sk-archive {
+    width: 100%;
     max-width: 680px;
-    margin: 80px auto;
-    text-align: center;
+    margin: 0 auto;
+    padding: 40px 0 100px;
   }
 
-  h1 {
+  .sk-maker-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .sk-maker-list a {
+    display: block;
+    padding: 5px 0;
+    color: #222222;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 13px;
+    font-size: clamp(17px, 4.4vw, 24px);
     font-weight: 400;
-    letter-spacing: 0.15em;
+    line-height: 1.3;
+    letter-spacing: -0.025em;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
   }
 
-  p {
-    margin-top: 20px;
-    color: #777777;
-    font-size: 14px;
+  .sk-maker-list a:hover {
+    opacity: 0.45;
+  }
+
+  .sk-maker-list a:focus-visible {
+    outline: 1px solid #111;
+    outline-offset: 4px;
+  }
+
+  @media (min-width: 768px) {
+    .sk-archive {
+      padding-top: 60px;
+    }
   }
 </style>

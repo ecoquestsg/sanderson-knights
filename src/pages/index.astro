@@ -1,60 +1,10 @@
 
 ---
-import type { ImageMetadata } from 'astro';
 import Layout from '../layouts/Layout.astro';
 import GalleryFeed from '../components/GalleryFeed.astro';
-import { renderPhoto } from '../lib/photos';
-import type { Exhibition } from '../data/exhibitions';
-
-// Temporary photos from the original template.
-// These will be replaced by CMS-managed watch photographs.
-const digital = import.meta.glob<{ default: ImageMetadata }>(
-  '../assets/digital/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG,WEBP,AVIF}',
-  { eager: true }
-);
-
-const analog = import.meta.glob<{ default: ImageMetadata }>(
-  '../assets/analog/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG,WEBP,AVIF}',
-  { eager: true }
-);
-
-const sourcePhotos = [
-  ...Object.values(digital),
-  ...Object.values(analog),
-].slice(0, 8);
-
-const demoImages = await Promise.all(
-  sourcePhotos.map(async (photo, index) => {
-    const output = await renderPhoto(photo.default);
-
-    return {
-      ...output,
-      alt: `Temporary gallery photograph ${index + 1}`,
-      credit: 'TEMPLATE IMAGE — DEMO ONLY',
-    };
-  })
-);
-
-const posts: Exhibition[] = [
-  {
-    slug: 'gallery-study-01',
-    maker: 'DEMONSTRATION',
-    name: 'GALLERY STUDY 01',
-    reference: '',
-    publishedAt: '2026-11-20',
-    images: demoImages.slice(0, 4),
-  },
-  {
-    slug: 'gallery-study-02',
-    maker: 'DEMONSTRATION',
-    name: 'GALLERY STUDY 02',
-    reference: '',
-    publishedAt: '2026-11-19',
-    images: demoImages.slice(4, 8),
-  },
-].filter((post) => post.images.length > 0);
+import { publishedExhibitions } from '../data/cms';
 ---
 
 <Layout title="Gallery">
-  <GalleryFeed posts={posts} />
+  <GalleryFeed posts={publishedExhibitions} />
 </Layout>

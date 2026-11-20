@@ -2,41 +2,34 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import GalleryFeed from '../../components/GalleryFeed.astro';
-import { exhibitions } from '../../data/demoExhibitions';
+import { makers, publishedExhibitions } from '../../data/cms';
 
 export function getStaticPaths() {
-  // Define the helper inside getStaticPaths
-  const makerSlug = (maker: string) =>
-    maker
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/&/g, 'and')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
+  const activeMakerSlugs = new Set(
+    publishedExhibitions.map((post) => post.makerSlug)
+  );
 
-  const makers = [...new Set(
-    exhibitions.map((post) => post.maker)
-  )];
-
-  return makers.map((maker) => ({
-    params: { maker: makerSlug(maker) },
-    props: {
-      maker,
-      posts: exhibitions.filter(
-        (post) => post.maker === maker
-      ),
-    },
-  }));
+  return makers
+    .filter((maker) => activeMakerSlugs.has(maker.slug))
+    .map((maker) => ({
+      params: {
+        maker: maker.slug,
+      },
+      props: {
+        maker,
+        posts: publishedExhibitions.filter(
+          (post) => post.makerSlug === maker.slug
+        ),
+      },
+    }));
 }
 
 const { maker, posts } = Astro.props;
 ---
 
-<Layout title={maker}>
+<Layout title={maker.name}>
   <section class="sk-maker-gallery">
-    <h1>{maker}</h1>
-
+    <h1>{maker.name}</h1>
     <GalleryFeed posts={posts} />
   </section>
 </Layout>
