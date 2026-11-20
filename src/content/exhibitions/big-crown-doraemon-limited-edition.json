@@ -1,0 +1,19 @@
+{
+  "name": "BIG CROWN DORAEMON LIMITED EDITION",
+  "slug": "big-crown-doraemon-limitied-edition",
+  "maker": "oris",
+  "reference": "01 754 7798 4085-Set",
+  "publishedAt": "2026-11-20",
+  "status": "draft",
+  "attribution": {
+    "name": "ORIS",
+    "url": "https://www.oris.ch/en-SG/product/watch/big-crown/new-big-crown-0/01-754-7798-4085-Set?srsltid=AYCX9vKHEk4Uyo4xNKJYuW3PGgG7uSgb18mQVo8BYFE7KIEltAdoRX0c"
+  },
+  "images": [
+    {
+      "src": "/images/exhibitions/citizen1.png",
+      "alt": "test"
+    }
+  ],
+  "rightsStatus": "pending"
+}
