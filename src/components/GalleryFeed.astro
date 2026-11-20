@@ -1,0 +1,420 @@
+
+---
+import type { Exhibition } from '../data/exhibitions';
+
+interface Props {
+  posts: Exhibition[];
+}
+
+const { posts } = Astro.props;
+
+const sortedPosts = [...posts].sort((a, b) =>
+  b.publishedAt.localeCompare(a.publishedAt)
+);
+---
+
+<section class="sk-feed" aria-label="Horological gallery">
+  {sortedPosts.map((post) => (
+    <article class="sk-post" data-sk-post>
+      <div
+        class="sk-carousel"
+        data-sk-carousel
+        tabindex="0"
+        aria-label={`${post.maker} ${post.name} photographs`}
+      >
+        {post.images.map((image, index) => (
+          <div class="sk-slide">
+            <button
+              class="sk-image-button"
+              type="button"
+              data-sk-open
+              data-image-index={index}
+              aria-label={`Enlarge image ${index + 1} of ${post.name}`}
+            >
+              <img
+                src={image.src}
+                srcset={image.srcset}
+                sizes="(min-width: 760px) 600px, calc(100vw - 40px)"
+                alt={image.alt}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+            </button>
+
+            <span class="sk-image-credit">
+              {image.credit}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div class="sk-meta">
+        <div class="sk-caption">
+          <h2>
+            {post.name}
+            {post.reference && ` — ${post.reference}`}
+          </h2>
+          <p>{post.maker}</p>
+        </div>
+
+        <span class="sk-counter" data-sk-counter>
+          01 / {String(post.images.length).padStart(2, '0')}
+        </span>
+      </div>
+    </article>
+  ))}
+</section>
+
+<dialog class="sk-viewer" data-sk-viewer aria-label="Image viewer">
+  <button
+    class="sk-viewer-close"
+    type="button"
+    data-sk-close
+    aria-label="Close image viewer"
+  >
+    ×
+  </button>
+
+  <button
+    class="sk-viewer-prev"
+    type="button"
+    data-sk-prev
+    aria-label="Previous image"
+  >
+    ‹
+  </button>
+
+  <div class="sk-viewer-content">
+    <img data-sk-viewer-image alt="" />
+    <p data-sk-viewer-credit></p>
+    <span data-sk-viewer-counter></span>
+  </div>
+
+  <button
+    class="sk-viewer-next"
+    type="button"
+    data-sk-next
+    aria-label="Next image"
+  >
+    ›
+  </button>
+</dialog>
+
+<style>
+  .sk-feed {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding-top: 12px;
+  }
+
+  .sk-post {
+    margin: 0 0 88px;
+  }
+
+  .sk-carousel {
+    display: flex;
+    width: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sk-carousel::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sk-slide {
+    position: relative;
+    flex: 0 0 100%;
+    min-width: 0;
+    aspect-ratio: 4 / 5;
+    scroll-snap-align: start;
+    background: #f5f5f5;
+    overflow: hidden;
+  }
+
+  .sk-image-button {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: zoom-in;
+  }
+
+  .sk-image-button img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .sk-image-credit {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    max-width: calc(100% - 20px);
+    padding: 4px 7px;
+    background: rgba(0, 0, 0, 0.55);
+    color: white;
+    font: 9px/1.4 Arial, sans-serif;
+    letter-spacing: 0.02em;
+    pointer-events: none;
+  }
+
+  .sk-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    padding-top: 13px;
+  }
+
+  .sk-caption h2 {
+    margin: 0;
+    color: #111;
+    font: 500 12px/1.5 Arial, sans-serif;
+  }
+
+  .sk-caption p {
+    margin: 3px 0 0;
+    color: #777;
+    font: 11px/1.5 Arial, sans-serif;
+    letter-spacing: 0.04em;
+  }
+
+  .sk-counter {
+    flex-shrink: 0;
+    color: #888;
+    font: 10px/1.5 Arial, sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sk-viewer {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: #111;
+    color: white;
+  }
+
+  .sk-viewer:not([open]) {
+    display: none;
+  }
+
+  .sk-viewer[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sk-viewer::backdrop {
+    background: #111;
+  }
+
+  .sk-viewer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 65px 18px 55px;
+    gap: 12px;
+  }
+
+  .sk-viewer-content img {
+    display: block;
+    max-width: 100%;
+    max-height: calc(100% - 55px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .sk-viewer-content p,
+  .sk-viewer-content span {
+    color: #aaa;
+    font: 10px/1.4 Arial, sans-serif;
+    text-align: center;
+  }
+
+  .sk-viewer button {
+    position: absolute;
+    z-index: 2;
+    border: 0;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+  }
+
+  .sk-viewer-close {
+    top: 18px;
+    right: 20px;
+    font-size: 30px;
+  }
+
+  .sk-viewer-prev,
+  .sk-viewer-next {
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 10px;
+    font-size: 32px;
+  }
+
+  .sk-viewer-prev {
+    left: 2px;
+  }
+
+  .sk-viewer-next {
+    right: 2px;
+  }
+
+  @media (min-width: 768px) {
+    .sk-post {
+      margin-bottom: 115px;
+    }
+  }
+</style>
+
+<script>
+  const viewer =
+    document.querySelector<HTMLDialogElement>('[data-sk-viewer]');
+
+  const viewerImage =
+    viewer?.querySelector<HTMLImageElement>('[data-sk-viewer-image]');
+
+  const viewerCredit =
+    viewer?.querySelector<HTMLElement>('[data-sk-viewer-credit]');
+
+  const viewerCounter =
+    viewer?.querySelector<HTMLElement>('[data-sk-viewer-counter]');
+
+  const closeButton =
+    viewer?.querySelector<HTMLButtonElement>('[data-sk-close]');
+
+  let activeImages: HTMLButtonElement[] = [];
+  let activeIndex = 0;
+  let trigger: HTMLButtonElement | null = null;
+
+  function showImage(index: number) {
+    if (!viewerImage || !viewerCredit || !viewerCounter ||
+        !activeImages.length) return;
+
+    activeIndex =
+      (index + activeImages.length) % activeImages.length;
+
+    const button = activeImages[activeIndex];
+    const image = button.querySelector('img');
+
+    if (!image) return;
+
+    viewerImage.alt = image.alt;
+    viewerImage.removeAttribute('srcset');
+    viewerImage.removeAttribute('sizes');
+    viewerImage.src = image.currentSrc || image.src;
+
+    viewerCredit.textContent =
+      button.parentElement
+        ?.querySelector('.sk-image-credit')
+        ?.textContent?.trim() || '';
+
+    viewerCounter.textContent =
+      `${String(activeIndex + 1).padStart(2, '0')} / ` +
+      `${String(activeImages.length).padStart(2, '0')}`;
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-sk-post]')
+    .forEach((post) => {
+      const carousel =
+        post.querySelector<HTMLElement>('[data-sk-carousel]');
+
+      const counter =
+        post.querySelector<HTMLElement>('[data-sk-counter]');
+
+      const images = Array.from(
+        post.querySelectorAll<HTMLButtonElement>('[data-sk-open]')
+      );
+
+      if (!carousel || !counter || !images.length) return;
+
+      const updateCounter = () => {
+        const position = Math.round(
+          carousel.scrollLeft / carousel.clientWidth
+        );
+
+        counter.textContent =
+          `${String(position + 1).padStart(2, '0')} / ` +
+          `${String(images.length).padStart(2, '0')}`;
+      };
+
+      carousel.addEventListener('scroll', updateCounter, {
+        passive: true,
+      });
+
+      carousel.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowRight' &&
+            event.key !== 'ArrowLeft') return;
+
+        event.preventDefault();
+
+        carousel.scrollBy({
+          left: carousel.clientWidth *
+            (event.key === 'ArrowRight' ? 1 : -1),
+          behavior: 'smooth',
+        });
+      });
+
+      images.forEach((button, index) => {
+        button.addEventListener('click', () => {
+          if (!viewer || !closeButton) return;
+
+          trigger = button;
+          activeImages = images;
+          showImage(index);
+          viewer.showModal();
+          closeButton.focus();
+        });
+      });
+    });
+
+  closeButton?.addEventListener('click', () => viewer?.close());
+
+  viewer?.querySelector('[data-sk-prev]')
+    ?.addEventListener('click', () => showImage(activeIndex - 1));
+
+  viewer?.querySelector('[data-sk-next]')
+    ?.addEventListener('click', () => showImage(activeIndex + 1));
+
+  viewer?.addEventListener('close', () => {
+    trigger?.focus();
+  });
+
+  viewer?.addEventListener('click', (event) => {
+    if (event.target === viewer) viewer.close();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (!viewer?.open) return;
+
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      showImage(activeIndex + 1);
+    }
+
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      showImage(activeIndex - 1);
+    }
+  });
+</script>
