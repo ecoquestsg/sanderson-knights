@@ -1,6 +1,6 @@
 {
+  "id": "2969eef4-8c7b-4734-8181-19de32198608",
   "name": "BIG CROWN DORAEMON LIMITED EDITION",
-  "slug": "big-crown-doraemon-limitied-edition",
   "maker": "oris",
   "reference": "01 754 7798 4085-Set",
   "publishedAt": "2026-11-20",
@@ -11,12 +11,10 @@
   },
   "images": [
     {
-      "src": "/images/exhibitions/h1n75niss5zdxbrbhtke-v1jpg.webp",
-      "alt": "test"
+      "src": "/images/exhibitions/h1n75niss5zdxbrbhtke-v1jpg.webp"
     },
     {
-      "src": "/images/exhibitions/doraemonowebdigital1920x1440v01-v1jpg.webp",
-      "alt": "test"
+      "src": "/images/exhibitions/doraemonowebdigital1920x1440v01-v1jpg.webp"
     }
   ],
   "rightsStatus": "pending"
