@@ -1,0 +1,218 @@
+
+# ======================================================
+# SANDERSON KNIGHTS
+# CMS Configuration — V1.0
+# ======================================================
+
+media:
+  input: public/images/exhibitions
+  output: /images/exhibitions
+  rename: safe
+  categories: [image]
+
+content:
+
+  # ----------------------------------------------------
+  # 01 — MAKERS
+  # Permanent manufacturer directory
+  # ----------------------------------------------------
+
+  - name: makers
+    label: Makers
+    type: collection
+    path: src/content/makers
+    format: json
+    filename: "{slug}.json"
+
+    view:
+      primary: name
+      fields: [name, slug]
+      add sort: [name]
+      default:
+        sort: name
+        order: asc
+
+    fields:
+      - name: name
+        label: Maker name
+        type: string
+        required: true
+
+      - name: slug
+        label: Permanent maker ID
+        type: string
+        required: true
+        pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        description: >
+          Lowercase permanent identifier, e.g. oris,
+          blancpain, or a-lange-and-sohne.
+          Do not change after publishing.
+
+
+  # ----------------------------------------------------
+  # 02 — EXHIBITIONS
+  # Individual watch galleries
+  # ----------------------------------------------------
+
+  - name: exhibitions
+    label: Exhibitions
+    type: collection
+    path: src/content/exhibitions
+    format: json
+    filename: "{slug}.json"
+
+    view:
+      primary: name
+      fields: [name, maker, publishedAt, status]
+      sort: [publishedAt, name]
+      default:
+        sort: publishedAt
+        order: desc
+
+    fields:
+
+      # WATCH DETAILS
+
+      - name: name
+        label: Watch name
+        type: string
+        required: true
+
+      - name: slug
+        label: Permanent exhibition ID
+        type: string
+        required: true
+        pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        description: >
+          Unique permanent ID for this exhibition.
+          Example: oris-big-crown-doraemon.
+
+      - name: maker
+        label: Maker
+        type: reference
+        required: true
+        options:
+          collection: makers
+          search: "name,slug"
+          value: "{fields.slug}"
+          label: "{fields.name}"
+
+      - name: reference
+        label: Watch reference number
+        type: string
+
+      - name: publishedAt
+        label: Publication date
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+
+      - name: status
+        label: Publishing status
+        type: select
+        required: true
+        default: draft
+        options:
+          values:
+            - name: draft
+              label: Draft
+            - name: published
+              label: Published
+
+
+      # DEFAULT ATTRIBUTION
+      # Used unless an individual image overrides it.
+
+      - name: attribution
+        label: Default image attribution
+        type: object
+        required: true
+        fields:
+          - name: name
+            label: Credit name
+            type: string
+            required: true
+            description: >
+              Example: ORIS or Photographer Name.
+              Do not type "Courtesy of".
+
+          - name: url
+            label: Original source URL
+            type: string
+            required: true
+            pattern: "^https?://.+"
+            description: >
+              Link to the original source or
+              authorised image publication.
+
+
+      # PHOTOGRAPHS
+      # List position determines carousel order.
+
+      - name: images
+        label: Gallery photographs
+        type: object
+        required: true
+        list:
+          min: 3
+          max: 8
+          collapsible:
+            collapsed: true
+            summary: "Photograph {index}"
+
+        fields:
+          - name: src
+            label: Photograph
+            type: image
+            required: true
+
+          - name: alt
+            label: Image description
+            type: text
+            required: true
+
+          - name: attribution
+            label: Custom image attribution
+            type: object
+            description: >
+              Leave empty to use the exhibition's
+              default attribution.
+            fields:
+              - name: name
+                label: Custom credit name
+                type: string
+                required: true
+
+              - name: url
+                label: Custom source URL
+                type: string
+                required: true
+                pattern: "^https?://.+"
+
+
+      # INTERNAL PUBLICATION METADATA
+      # Avoid storing confidential information here.
+      # This GitHub repository is public.
+
+      - name: rightsStatus
+        label: Publication rights status
+        type: select
+        required: true
+        default: pending
+        options:
+          values:
+            - name: pending
+              label: Pending verification
+            - name: approved
+              label: Approved for publication
+            - name: restricted
+              label: Restricted — do not publish
+
+      - name: sourceNotes
+        label: Internal source notes
+        type: text
+        description: >
+          Non-confidential attribution and rights
+          references only. This data is stored
+          in a public GitHub repository.
