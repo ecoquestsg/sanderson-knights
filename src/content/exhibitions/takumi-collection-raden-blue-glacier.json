@@ -4,7 +4,7 @@
   "maker": "knot",
   "reference": "ATC-40SVJRBL",
   "publishedAt": "2026-11-21",
-  "status": "draft",
+  "status": "published",
   "attribution": {
     "name": "Knot",
     "url": "https://en.knot-designs.com/products/atc-40svjrbl"
@@ -29,5 +29,5 @@
       "src": "https://pub-9c49e62e2618454e8a15c72bc055c735.r2.dev/exhibitions/knot-takumi-raden-blue-glacier/knot-1.jpeg"
     }
   ],
-  "rightsStatus": "pending"
+  "rightsStatus": "approved"
 }
