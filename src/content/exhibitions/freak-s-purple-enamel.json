@@ -11,13 +11,16 @@
   },
   "images": [
     {
-      "src": "/images/exhibitions/2513-500le-7ae-purp-0a-features-4.webp"
+      "src": "https://media.sandersonknights.com/exhibitions/un-freak-x-purple-enamel/purple-freak-x-1.jpg"
     },
     {
-      "src": "/images/exhibitions/2513-500le-7ae-purp-0a-features-1.webp"
+      "src": "https://media.sandersonknights.com/exhibitions/un-freak-x-purple-enamel/purple-freak-x-2.jpg"
     },
     {
-      "src": "/images/exhibitions/2513-500le-7ae-purp-0a-hero-a99a3e.webp"
+      "src": "https://media.sandersonknights.com/exhibitions/un-freak-x-purple-enamel/purple-freak-x-3.jpg"
+    },
+    {
+      "src": "https://media.sandersonknights.com/exhibitions/un-freak-x-purple-enamel/purple-freak-x-4.jpg"
     }
   ],
   "rightsStatus": "approved"
