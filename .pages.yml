@@ -171,9 +171,14 @@ content:
 
         fields:
           - name: src
-            label: Photograph
-            type: image
+            label: Photograph URL (Cloudflare R2)
+            type: string
             required: true
+            pattern: "^https?://.+"
+            description: >
+              Paste the public URL of the photograph
+              uploaded to Cloudflare R2.
+
 
           - name: alt
             label: Image description
