@@ -2,7 +2,7 @@
   "id": "2969eef4-8c7b-4734-8181-19de32198608",
   "name": "BIG CROWN DORAEMON LIMITED EDITION",
   "maker": "oris",
-  "reference": "01 754 7798 4085-Set",
+  "reference": "01 754 7798 4085",
   "publishedAt": "2026-11-20",
   "status": "published",
   "attribution": {
@@ -11,22 +11,28 @@
   },
   "images": [
     {
-      "src": "/images/exhibitions/oris-1.jpg"
+      "src": "https://media.sandersonknights.com/exhibitions/oris-doraemon/dorea-1.jpg"
     },
     {
-      "src": "/images/exhibitions/hy9jclggyikilph8bzph-v1.jpg"
+      "src": "https://media.sandersonknights.com/exhibitions/oris-doraemon/dorea-2.jpg"
     },
     {
-      "src": "/images/exhibitions/pboxkyqsk94dk9dt81xr-v1.jpg"
+      "src": "https://media.sandersonknights.com/exhibitions/oris-doraemon/dorea-3.jpg"
     },
     {
-      "src": "/images/exhibitions/esmdx3ioctsccn99cazv-v1.jpg"
+      "src": "https://media.sandersonknights.com/exhibitions/oris-doraemon/dorea-4.jpg"
     },
     {
-      "src": "/images/exhibitions/jewcojkdmkasgndmxvgp-v1.jpg"
+      "src": "https://media.sandersonknights.com/exhibitions/oris-doraemon/dorea-5.jpg"
     },
     {
-      "src": "/images/exhibitions/z4p53kpgpdt1qoexhkjz-v1.jpg"
+      "src": "https://media.sandersonknights.com/exhibitions/oris-doraemon/dorea-6.jpg"
+    },
+    {
+      "src": "https://media.sandersonknights.com/exhibitions/oris-doraemon/dorea-7.jpg"
+    },
+    {
+      "src": "https://media.sandersonknights.com/exhibitions/oris-doraemon/dorea-8.jpg"
     }
   ],
   "rightsStatus": "approved"
