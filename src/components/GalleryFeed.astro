@@ -67,14 +67,20 @@ const sortedPosts = [...posts].sort((a, b) =>
         ))}
       </div>
 
+    
       <div class="sk-meta">
         <div class="sk-caption">
-          <h2>
-            {post.name}
-            {post.reference && ` — ${post.reference}`}
-          </h2>
-          <p>{post.maker}</p>
+          <h2>{post.name}</h2>
+
+          {post.reference && (
+            <p class="sk-reference">
+              REFERENCE: {post.reference}
+            </p>
+          )}
+
+          <p class="sk-maker">{post.maker}</p>
         </div>
+
 
         <span class="sk-counter" data-sk-counter>
           01 / {String(post.images.length).padStart(2, '0')}
@@ -235,11 +241,16 @@ const sortedPosts = [...posts].sort((a, b) =>
     font: 500 12px/1.5 Arial, sans-serif;
   }
 
+
   .sk-caption p {
     margin: 3px 0 0;
     color: #777;
     font: 11px/1.5 Arial, sans-serif;
     letter-spacing: 0.04em;
+  }
+
+  .sk-caption .sk-maker {
+    margin-top: 3px;
   }
 
   .sk-counter {
