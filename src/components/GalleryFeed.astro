@@ -584,6 +584,7 @@ const sortedPosts = [...posts].sort((a, b) =>
       `${String(activeImages.length).padStart(2, '0')}`;
   }
 
+
   document.querySelectorAll<HTMLElement>('[data-sk-post]')
     .forEach((post) => {
       const carousel =
@@ -592,25 +593,132 @@ const sortedPosts = [...posts].sort((a, b) =>
       const counter =
         post.querySelector<HTMLElement>('[data-sk-counter]');
 
+      // Capture only original images, before creating clones.
       const images = Array.from(
         post.querySelectorAll<HTMLButtonElement>('[data-sk-open]')
       );
 
       if (!carousel || !counter || !images.length) return;
 
+      const total = images.length;
+      const looping = total > 1;
+
+      // Open the existing full-screen viewer.
+      const openImage = (
+        index: number,
+        button: HTMLButtonElement
+      ) => {
+        if (!viewer || !closeButton) return;
+
+        trigger = button;
+        activeImages = images;
+        showImage(index);
+        viewer.showModal();
+        closeButton.focus();
+      };
+
+      // Keep original image interactions.
+      images.forEach((button, index) => {
+        button.addEventListener('click', () => {
+          openImage(index, button);
+        });
+      });
+
+      if (looping) {
+        const firstSlide = carousel.firstElementChild;
+        const lastSlide = carousel.lastElementChild;
+
+        if (firstSlide && lastSlide) {
+          const firstClone = firstSlide.cloneNode(true) as HTMLElement;
+          const lastClone = lastSlide.cloneNode(true) as HTMLElement;
+
+          // Clone images should not compete for high priority.
+          [firstClone, lastClone].forEach((slide) => {
+            slide.querySelectorAll('img').forEach((img) => {
+              img.loading = 'lazy';
+              img.fetchPriority = 'auto';
+            });
+
+            // Avoid duplicate keyboard tab stops.
+            slide.querySelectorAll<HTMLElement>('button, a')
+              .forEach((element) => {
+                element.tabIndex = -1;
+              });
+          });
+
+          carousel.insertBefore(lastClone, firstSlide);
+          carousel.appendChild(firstClone);
+
+          // Clone slides still open the correct original image.
+          const lastButton =
+            lastClone.querySelector<HTMLButtonElement>('[data-sk-open]');
+
+          const firstButton =
+            firstClone.querySelector<HTMLButtonElement>('[data-sk-open]');
+
+          lastButton?.addEventListener('click', () => {
+            openImage(total - 1, lastButton);
+          });
+
+          firstButton?.addEventListener('click', () => {
+            openImage(0, firstButton);
+          });
+        }
+
+        // Start on the actual first slide, after the leading clone.
+        carousel.scrollLeft = carousel.clientWidth;
+      }
+
       const updateCounter = () => {
-        const position = Math.round(
-          carousel.scrollLeft / carousel.clientWidth
-        );
+        const width = carousel.clientWidth;
+        if (!width) return;
+
+        const page = Math.round(carousel.scrollLeft / width);
+
+        const index = looping
+          ? (page - 1 + total) % total
+          : Math.max(0, Math.min(page, total - 1));
 
         counter.textContent =
-          `${String(position + 1).padStart(2, '0')} / ` +
-          `${String(images.length).padStart(2, '0')}`;
+          `${String(index + 1).padStart(2, '0')} / ` +
+          `${String(total).padStart(2, '0')}`;
+      };
+
+      // Correct the scroll position after reaching a clone.
+      const settleCarousel = () => {
+        if (!looping) return;
+
+        const width = carousel.clientWidth;
+        if (!width) return;
+
+        const page = Math.round(carousel.scrollLeft / width);
+
+        if (page === 0) {
+          // Leading clone -> actual last image.
+          carousel.scrollLeft = total * width;
+        } else if (page === total + 1) {
+          // Trailing clone -> actual first image.
+          carousel.scrollLeft = width;
+        }
+
+        updateCounter();
       };
 
       carousel.addEventListener('scroll', updateCounter, {
         passive: true,
       });
+
+      // Use scrollend where supported; debounce as a fallback.
+      if ('onscrollend' in carousel) {
+        carousel.addEventListener('scrollend', settleCarousel);
+      } else {
+        let scrollTimer: number | undefined;
+
+        carousel.addEventListener('scroll', () => {
+          window.clearTimeout(scrollTimer);
+          scrollTimer = window.setTimeout(settleCarousel, 150);
+        }, { passive: true });
+      }
 
       carousel.addEventListener('keydown', (event) => {
         if (event.key !== 'ArrowRight' &&
@@ -625,17 +733,7 @@ const sortedPosts = [...posts].sort((a, b) =>
         });
       });
 
-      images.forEach((button, index) => {
-        button.addEventListener('click', () => {
-          if (!viewer || !closeButton) return;
-
-          trigger = button;
-          activeImages = images;
-          showImage(index);
-          viewer.showModal();
-          closeButton.focus();
-        });
-      });
+      updateCounter();
     });
 
   closeButton?.addEventListener('click', () => viewer?.close());
