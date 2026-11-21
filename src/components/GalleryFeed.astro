@@ -14,7 +14,7 @@ const sortedPosts = [...posts].sort((a, b) =>
 ---
 
 <section class="sk-feed" aria-label="Horological gallery">
-  {sortedPosts.map((post) => (
+  {sortedPosts.map((post, postIndex) => (
     <article class="sk-post" data-sk-post>
       <div
         class="sk-carousel"
@@ -39,7 +39,8 @@ const sortedPosts = [...posts].sort((a, b) =>
                 srcset={image.srcset}
                 sizes="(min-width: 760px) 600px, calc(100vw - 40px)"
                 alt={image.alt}
-                loading={index === 0 ? 'eager' : 'lazy'}
+                loading={postIndex === 0 && index === 0 ? 'eager' : 'lazy'}
+                fetchpriority={postIndex === 0 && index === 0 ? 'high' : 'auto'}
                 decoding="async"
               />
             </button>
