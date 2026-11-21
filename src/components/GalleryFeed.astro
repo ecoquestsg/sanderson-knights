@@ -48,7 +48,7 @@ const sortedPosts = [...posts].sort((a, b) =>
               {
                 image.creditUrl && image.creditName ? (
                   <>
-                    Courtesy of{' '}
+                    Image credits:{' '}
                     <a
                       href={image.creditUrl}
                       target="_blank"
@@ -562,7 +562,7 @@ const sortedPosts = [...posts].sort((a, b) =>
 
     if (prefix && link && fallback) {
       if (creditName && creditUrl) {
-        prefix.textContent = 'Courtesy of ';
+        prefix.textContent = 'Image credits: ';
         link.textContent = creditName;
         link.href = creditUrl;
         link.hidden = false;

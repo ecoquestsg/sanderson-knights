@@ -145,7 +145,7 @@ export const publishedExhibitions: Exhibition[] =
             `${makerName} ${post.name} — image ${index + 1}`,
 
           // Standardised credit presentation.
-          credit: `Courtesy of ${credit.name}`,
+          credit: `Image credits: ${credit.name}`,
           creditName: credit.name,
           creditUrl: credit.url,
         };
