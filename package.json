@@ -1,5 +1,5 @@
 {
-  "name": "astro-photo-folio",
+  "name": "sanderson-knights",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -9,10 +9,6 @@
     "build": "npm run validate:content && astro build && node scripts/strip-unreferenced-assets.mjs",
     "preview": "astro preview",
     "astro": "astro",
-    "setup": "npm run gen:brand && npm run gen:icons && npm run gen:placeholders",
-    "gen:brand": "node scripts/generate-brand.mjs",
-    "gen:icons": "node scripts/generate-icons.mjs",
-    "gen:placeholders": "node scripts/generate-placeholders.mjs",
     "validate:content": "node scripts/validate-exhibitions.mjs"
   },
   "dependencies": {
