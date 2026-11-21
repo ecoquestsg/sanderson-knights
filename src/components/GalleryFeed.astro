@@ -103,7 +103,15 @@ const sortedPosts = [...posts].sort((a, b) =>
   </button>
 
   <div class="sk-viewer-content">
-    <img data-sk-viewer-image alt="" />
+    <div class="sk-zoom-stage" data-sk-zoom-stage>
+      <div class="sk-zoom-surface" data-sk-zoom-surface>
+        <img
+          data-sk-viewer-image
+          alt=""
+          draggable="false"
+        />
+      </div>
+    </div>
     <p class="sk-viewer-credit" data-sk-viewer-credit>
       <span data-sk-credit-prefix></span>
       <a
@@ -279,14 +287,48 @@ const sortedPosts = [...posts].sort((a, b) =>
     gap: 12px;
   }
 
-  .sk-viewer-content img {
+  
+  /* Full-screen image interaction area */
+
+  .sk-zoom-stage {
+    position: relative;
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .sk-zoom-surface {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: none;
+    transform-origin: center center;
+  }
+
+  .sk-zoom-surface img {
     display: block;
     max-width: 100%;
-    max-height: calc(100% - 55px);
+    max-height: 100%;
     width: auto;
     height: auto;
     object-fit: contain;
+    pointer-events: none;
+    -webkit-user-drag: none;
   }
+
+  /* Prevent credit and counter from shrinking */
+
+  .sk-viewer-credit,
+  [data-sk-viewer-counter] {
+    flex-shrink: 0;
+  }
+
 
   .sk-viewer-content p,
   .sk-viewer-content span {
@@ -334,6 +376,8 @@ const sortedPosts = [...posts].sort((a, b) =>
 </style>
 
 <script>
+  import Panzoom from '@panzoom/panzoom';
+
   const viewer =
     document.querySelector<HTMLDialogElement>('[data-sk-viewer]');
 
@@ -353,6 +397,123 @@ const sortedPosts = [...posts].sort((a, b) =>
   let activeIndex = 0;
   let trigger: HTMLButtonElement | null = null;
 
+
+  // =====================================================
+  // GALLERY IMMERSIVE IMAGE ZOOM
+  // =====================================================
+
+  const zoomStage =
+    viewer?.querySelector<HTMLElement>('[data-sk-zoom-stage]');
+
+  const zoomSurface =
+    viewer?.querySelector<HTMLElement>('[data-sk-zoom-surface]');
+
+  const zoom = zoomSurface
+    ? Panzoom(zoomSurface, {
+        minScale: 1,
+        maxScale: 5,
+        panOnlyWhenZoomed: true,
+        touchAction: 'none',
+      })
+    : null;
+
+  // Return image to its original fitted position.
+  function resetZoom() {
+    zoom?.reset({ animate: false });
+  }
+
+  // Double-tap or double-click toggles zoom.
+  function toggleZoom(clientX: number, clientY: number) {
+    if (!zoom) return;
+
+    if (zoom.getScale() > 1.05) {
+      zoom.reset({ animate: true });
+    } else {
+      zoom.zoomToPoint(
+        2.5,
+        { clientX, clientY },
+        { animate: true }
+      );
+    }
+  }
+
+  // Desktop: double-click to zoom.
+  zoomStage?.addEventListener('dblclick', (event) => {
+    if (event.detail < 2) return;
+    event.preventDefault();
+
+    toggleZoom(event.clientX, event.clientY);
+  });
+
+  // Mobile: detect two quick taps in the same area.
+  // Ignore drags and multi-finger gestures.
+  let lastTap = 0;
+  let lastX = 0;
+  let lastY = 0;
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let multiTouch = false;
+  const activeTouches = new Set<number>();
+
+  zoomStage?.addEventListener('pointerdown', (event) => {
+    if (event.pointerType !== 'touch') return;
+
+    activeTouches.add(event.pointerId);
+
+    if (activeTouches.size > 1) {
+      multiTouch = true;
+      lastTap = 0;
+    }
+
+    touchStartX = event.clientX;
+    touchStartY = event.clientY;
+  });
+
+  zoomStage?.addEventListener('pointerup', (event) => {
+    if (event.pointerType !== 'touch') return;
+
+    activeTouches.delete(event.pointerId);
+
+    if (multiTouch) {
+      if (activeTouches.size === 0) multiTouch = false;
+      return;
+    }
+
+    const movement = Math.hypot(
+      event.clientX - touchStartX,
+      event.clientY - touchStartY
+    );
+
+    if (movement > 12) {
+      lastTap = 0;
+      return;
+    }
+
+    const now = performance.now();
+
+    const closeToPrevious = Math.hypot(
+      event.clientX - lastX,
+      event.clientY - lastY
+    ) < 50;
+
+    if (now - lastTap < 300 && closeToPrevious) {
+      event.preventDefault();
+      lastTap = 0;
+      toggleZoom(event.clientX, event.clientY);
+    } else {
+      lastTap = now;
+      lastX = event.clientX;
+      lastY = event.clientY;
+    }
+  });
+
+  zoomStage?.addEventListener('pointercancel', (event) => {
+    activeTouches.delete(event.pointerId);
+    lastTap = 0;
+    if (activeTouches.size === 0) multiTouch = false;
+  });
+
+
   function showImage(index: number) {
     if (!viewerImage || !viewerCredit || !viewerCounter ||
         !activeImages.length) return;
@@ -364,6 +525,8 @@ const sortedPosts = [...posts].sort((a, b) =>
     const image = button.querySelector('img');
 
     if (!image) return;
+
+    resetZoom();
 
     viewerImage.alt = image.alt;
     viewerImage.removeAttribute('srcset');
@@ -472,8 +635,13 @@ const sortedPosts = [...posts].sort((a, b) =>
     ?.addEventListener('click', () => showImage(activeIndex + 1));
 
   viewer?.addEventListener('close', () => {
+    resetZoom();
+    lastTap = 0;
+    activeTouches.clear();
+    multiTouch = false;
     trigger?.focus();
   });
+
 
   viewer?.addEventListener('click', (event) => {
     if (event.target === viewer) viewer.close();
