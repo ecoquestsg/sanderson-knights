@@ -11,13 +11,16 @@
   },
   "images": [
     {
-      "src": "/images/exhibitions/sbgd228kv.jpg"
+      "src": "https://media.sandersonknights.com/exhibitions/grand-seiko-red-lion/gs-red-3.jpg",
+      "alt": "Spring Drive Limited Edition SBGD228 “Red Lion”"
     },
     {
-      "src": "/images/exhibitions/sbgd228count1.jpg"
+      "src": "https://media.sandersonknights.com/exhibitions/grand-seiko-red-lion/gs-red-2.jpg",
+      "alt": "A limited edition of eight, the SBGD228 is set with over 250 diamonds between its 18k rose gold case and its dial."
     },
     {
-      "src": "/images/exhibitions/sbgd228count3.png"
+      "src": "https://media.sandersonknights.com/exhibitions/grand-seiko-red-lion/gs-red-1.png",
+      "alt": "KYOTO leather strap with metallic accents."
     }
   ],
   "rightsStatus": "approved"
