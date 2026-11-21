@@ -63,13 +63,23 @@ a {
    HEADER
    ===================================================== */
 
-.sk-header {
+/* .sk-header {
   position: relative;
   z-index: 10;
   width: 100%;
   background: #ffffff;
   padding: 26px 20px 22px;
+} */
+
+.sk-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background: #ffffff;
+  padding: 26px 20px 22px;
 }
+
 
 .sk-navigation {
   display: flex;

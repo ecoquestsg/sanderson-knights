@@ -1,14 +1,4 @@
-
 # SANDERSON KNIGHTS
-
-An independent visual curation of horology.
-
-## Overview
-
-Sanderson Knights is a photography-led horological gallery.
-
-The website presents curated exhibitions of timepieces
-through a minimal, mobile-first interface.
 
 ## Architecture
 
